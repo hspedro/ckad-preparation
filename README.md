@@ -283,3 +283,89 @@ NAME                     READY   STATUS    RESTARTS   AGE
 nginx-5788499b89-j77sx   1/1     Running   0          75s
 nginx-5788499b89-xfw5b   1/1     Running   0          75s
 ```
+
+## Namespaces
+
+In Kubernetes, namespaces provides a mechanism for isolating groups of resources
+within a single cluster. Names of resources need to be unique within a
+namespace, but not across namespaces. Namespace-based scoping is applicable only
+for namespaced objects (e.g. Deployments, Services, etc) and not for
+cluster-wide objects (e.g. StorageClass, Nodes, PersistentVolumes, etc).
+
+Kubernetes starts with four initial namespaces:
+
+* `default`: The default namespace for objects with no other namespace
+* `kube-system`: The namespace for objects created by the Kubernetes system
+* `kube-public`: This namespace is created automatically and is readable by all
+users (including those not authenticated). This namespace is mostly reserved for
+cluster usage, in case that some resources should be visible and readable
+publicly throughout the whole cluster. The public aspect of this namespace is
+only a convention, not a requirement.
+* `kube-node-lease`: This namespace holds Lease objects associated with each
+node. Node leases allow the kubelet to send heartbeats so that the control plane
+can detect node failure.
+
+Offical Doc: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+
+![Namespace resource allocation](./images/namespace-1.png)
+
+### YAML Deploy
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: playground
+spec:
+```
+
+To deploy:
+
+```bash
+$ kubectl apply -f ./examples/namespace.yaml
+namespace/playground created
+
+$ kubectl get namespaces
+NAME                   STATUS   AGE
+default                Active   7d9h
+kube-node-lease        Active   7d9h
+kube-public            Active   7d9h
+kube-system            Active   7d9h
+kubernetes-dashboard   Active   7d5h
+playground             Active   9s
+```
+To create a deployment in this namespace:
+
+```diff
+diff --git a/examples/deployment.yaml b/examples/deployment.yaml
+index 0d7cf35..2a8a299 100644
+--- a/examples/deployment.yaml
++++ b/examples/deployment.yaml
+@@ -2,6 +2,7 @@ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
+   name: nginx
++  namespace: playground
+   labels:
+     type: webserver
+ spec:
+```
+
+And apply:
+
+```bash
+$ kubectl apply -f ./examples/deployment.yaml
+deployment.apps/nginx created
+
+$ kubectl -n playground get deployments
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+nginx   2/2     2            2           25s
+```
+
+To switch between default namespaces:
+
+```bash
+kubectl config set-context $(kubectl config current-context) --namespace=playground
+```
+
+![Namespace context switch](./images/namespace-2.png)
