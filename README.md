@@ -225,3 +225,61 @@ number of replicas in `nginx-rs.yaml`
 
 To change the number of replicas dynamically, using throughput for example, we
 need an HPA (Horizontal Pod Autoscaler).
+
+## Deployments
+
+A Deployment provides declarative updates for Pods and ReplicaSets.
+
+You describe a desired state in a Deployment, and the Deployment Controller
+changes the actual state to the desired state at a controlled rate. You can
+define Deployments to create new ReplicaSets, or to remove existing Deployments
+and adopt all their resources with new Deployments.
+
+Official Doc: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+
+### YAML
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    type: webserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: webserver
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        name: nginx
+        type: webserver
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        imagePullPolicy: IfNotPresent
+```
+
+To deploy:
+
+```bash
+$ kubectl apply -f ./examples/deployment.yaml
+deployment.apps/nginx created
+
+$ kubectl get deploy
+NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+nginx   2/2     2            2           5s
+
+$ kubectl get rs
+NAME               DESIRED   CURRENT   READY   AGE
+nginx-5788499b89   2         2         2       10s
+
+$ kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+nginx-5788499b89-j77sx   1/1     Running   0          75s
+nginx-5788499b89-xfw5b   1/1     Running   0          75s
+```
