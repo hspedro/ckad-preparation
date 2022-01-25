@@ -152,3 +152,76 @@ To delete a pod via `kubectl`:
 $ kubectl delete pod nginx
 pod "nginx" deleted
 ```
+
+## ReplicaSet
+
+ReplicaSet is a type of a controller whose purpose is to maintain a stable set
+of replica Pods running at any given time. As such, it is often used to
+guarantee the availability of a specified number of identical Pods.
+
+Provides high availability by running multiple instances of a single pod. Even
+in single-pod scenarios, the ReplicaSet is still useful by bringing up new pods
+if the previous one crashed or went down.
+
+It shares the load across multiple pods.
+
+Official Doc: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+
+### Deploying declaratively (YAML)
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+  labels:
+    type: webserver
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      type: webserver
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        name: nginx
+        type: webserver
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        imagePullPolicy: IfNotPresent
+```
+
+And creating:
+
+```bash
+$ kubectl apply -f ./exmaples/nginx-rs.yaml
+replicaset.apps/app-rs created
+$ kubectl get rs
+NAME    DESIRED   CURRENT   READY   AGE
+nginx   2         2         2       12m
+$ kubectl get pods
+NAME          READY   STATUS    RESTARTS   AGE
+nginx-749sr   1/1     Running   0          2m
+nginx-qdqrn   1/1     Running   0          2m
+```
+
+It is important to specify the **selector**, since this will be used by the
+ReplicaSet to match what pods it should consider under its control. This also
+makes it possible for ReplicaSets to monitor already existing pods.
+
+The **template** section is used to specify how the pod should be created, if
+the ReplicaSet needs to bring up a new pod.
+
+### Updating the Replicas
+
+1. Change `replicas` number in the YAML and apply with: `kubectl replace -f nginx-rs.yaml`
+2. Use `kubectl scale --replicas=6 -f nginx-rs.yaml`, this won't change the actual
+number of replicas in `nginx-rs.yaml`
+3. Use `kubectl scale --replicas=6 replicaset nginx`, this won't change the actual
+number of replicas in `nginx-rs.yaml`
+
+To change the number of replicas dynamically, using throughput for example, we
+need an HPA (Horizontal Pod Autoscaler).
