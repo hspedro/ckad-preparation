@@ -1,14 +1,8 @@
 
-## Master
+## **Master Node**
 
 Another node with Kubernetes in it, responsible for the orchestration of worker
 nodes within a cluster. It embeds the Kube API Server.
-
-## Worker Nodes
-
-Where the containers are hosted, thus make use of a Container Runtime.
-To communicate with the Kube API Server from the Master node, the worker nodes
-embeds the kubelet service
 
 ### API Server
 
@@ -23,6 +17,22 @@ that information in all the nodes of the cluster in a distributed manner.
 
 It also implements logs within a cluster to ensure no conflict between masters.
 
+### Controller
+
+Responsible for noticing and responding when nodes, containers, endpoints goes
+down, etc. - it makes decision to bring up new containers, in such cases.
+
+### Scheduler
+
+Responsible for distributing work, or containers, across multiple nodes. Assign
+newly-created containers to nodes.
+
+## **Worker Nodes**
+
+Where the containers are hosted, thus make use of a Container Runtime.
+To communicate with the Kube API Server from the Master node, the worker nodes
+embeds the kubelet service
+
 ### kubelet
 
 Agent that runs on each node in the cluster, responsible for making sure the
@@ -36,12 +46,13 @@ one, but there are a few others:
 * [rkt](https://www.redhat.com/pt-br/topics/containers/what-is-rkt): maintained by RedHat
 * [CRI-O](https://cri-o.io/): Cloud Native Computing Foundation incubating project
 
-### Controller
+![Master and Worker nodes](./images/master-worker.png)
 
-Responsible for noticing and responding when nodes, containers, endpoints goes
-down, etc. - it makes decision to bring up new containers, in such cases.
+## Kubectl CLI
 
-### Scheduler
+Deploy and manage applications in a Kubernetes cluster:
+* Cluster information: `kubectl cluster-info`
+* Status of other nodes: `kubectl get nodes`
+* Manage other resources
 
-Responsible for distributing work, or containers, across multiple nodes. Assign
-newly-created containers to nodes.
+Cheat Sheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
