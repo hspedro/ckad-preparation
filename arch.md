@@ -15,7 +15,7 @@ embeds the kubelet service
 Frontend for Kubernetes. User management devices, CLI, etc. talk directly with
 API server to interact with a Cluster.
 
-### etcd Key Store
+### `etcd` Key Store
 
 Distributed reliable key-value store used by Kubernetes to store all data used
 to manage the cluster. When you have multiple nodes and master, etcd stores all
@@ -26,7 +26,8 @@ It also implements logs within a cluster to ensure no conflict between masters.
 ### kubelet
 
 Agent that runs on each node in the cluster, responsible for making sure the
-containers are running in the nodes as expected.
+containers are running in the nodes as expected. Communicates with the Kube API
+server from the Master node.
 
 ### Container Runtime
 
