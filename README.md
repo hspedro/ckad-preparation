@@ -80,6 +80,8 @@ one must create new pods, rather than new containers to an existing pod.
 
 Load balancer between the containers is handled by a separate entity.
 
+Official Doc: https://kubernetes.io/docs/concepts/workloads/pods/
+
 ## Multi-Container Pods
 
 Even though pods and container usually have a 1:1 relationship, it is not
@@ -113,8 +115,6 @@ $ kubectl get pods
 NAME    READY   STATUS    RESTARTS   AGE
 nginx   1/1     Running   0          6s
 ```
-
-
 
 ### Deploying via Kubectl declaratively
 
