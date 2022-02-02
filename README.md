@@ -369,3 +369,56 @@ kubectl config set-context $(kubectl config current-context) --namespace=playgro
 ```
 
 ![Namespace context switch](./images/namespace-2.png)
+
+## Resource Quota
+
+When several users or teams share a cluster with a fixed number of nodes, there
+is a concern that one team could use more than its fair share of resources.
+
+Resource quotas are a tool for administrators to address this concern.
+
+A resource quota, defined by a ResourceQuota object, provides constraints that
+limit aggregate resource consumption per namespace. It can limit the quantity of
+objects that can be created in a namespace by type, as well as the total amount
+of compute resources that may be consumed by resources in that namespace.
+
+Official Doc: https://kubernetes.io/docs/concepts/policy/resource-quotas/
+
+### YAML Deploy
+
+The following will match each pod with `priorityClassName: high` in its
+definition, on `playground` namespace to the quota.
+
+```yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: playground-quota
+  namespace: playground
+spec:
+  hard:
+    cpu: "4"
+    memory: "4Gi"
+    pods: 20
+  scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: ["high"]
+```
+
+To deploy:
+
+```bash
+$ kubectl apply -f ./examples/resource-quota.yaml
+resourcequota/playground-quota created
+
+$ kubectl -n playground describe quota
+Name:       playground-quota
+Namespace:  playground
+Resource    Used  Hard
+--------    ----  ----
+cpu         0     4
+memory      0     4Gi
+pods        0     20
+```
