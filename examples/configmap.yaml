@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config3
+data:
+  FOO: "BAR"
+  XPTO: "ACME"

@@ -422,3 +422,117 @@ cpu         0     4
 memory      0     4Gi
 pods        0     20
 ```
+
+## ConfigMap
+
+A ConfigMap is an API object used to store non-confidential data in key-value pairs.
+Pods can consume ConfigMaps as environment variables, command-line arguments, or as
+configuration files in a volume.
+
+A ConfigMap allows you to decouple environment-specific configuration from your
+container images, so that your applications are easily portable.
+
+Official Doc: https://kubernetes.io/docs/concepts/configuration/configmap/
+
+### Imperative Deploy
+
+One can create imperatively by using:
+
+```bash
+$ kubectl create configMap my-config1 \
+  --from-literal=ENV_1='VALUE_1' \
+  --from-literal=ENV_2='VALUE_2'
+configmap/my-config1 created
+
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      20d
+my-config1         2      25s
+
+$ kubectl describe configmap my-config1
+Name:         my-config1
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+ENV_1:
+----
+VALUE_1
+ENV_2:
+----
+VALUE_2
+Events:  <none>
+```
+
+Or, one can store the values in a file, i.e:
+
+```properties
+# examples/config.properties
+ENV_1: VALUE_1
+ENV_2: VALUE_2
+```
+
+And then reference the file in the command:
+
+```bash
+$ kubectl create configmap my-config2 --from-file=examples/config.properties
+configmap/my-config2 created
+
+$ kubectl get configmap
+NAME               DATA   AGE
+kube-root-ca.crt   1      20d
+my-config1         2      25m
+my-config2         1      4s
+
+$ kubectl describe configmap my-config2
+Name:         my-config2
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+config.properties:
+----
+ENV_1: VALUE_1
+ENV_2: VALUE_2
+
+Events:  <none>
+```
+
+### YAML Deploy
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config3
+data:
+  FOO: "BAR"
+  XPTO: "ACME"
+```
+
+Then, we apply:
+
+```bash
+$ kubectl apply -f examples/configmap.yaml
+configmap/my-config3 created
+
+$ kubectl describe configmap my-config3
+Name:         my-config3
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+FOO:
+----
+BAR
+XPTO:
+----
+ACME
+Events:  <none>
+```
