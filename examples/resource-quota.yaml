@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: playground-quota
+  namespace: playground
+spec:
+  hard:
+    cpu: "4"
+    memory: "4Gi"
+    pods: 20
+  scopeSelector:
+      matchExpressions:
+      - operator : In
+        scopeName: PriorityClass
+        values: ["high"]
