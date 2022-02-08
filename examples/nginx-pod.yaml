@@ -10,3 +10,6 @@ spec:
   - name: nginx
     image: nginx
     imagePullPolicy: IfNotPresent
+  - envFrom:
+    - configMapRef:
+        name: my-config3

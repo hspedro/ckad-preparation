@@ -536,3 +536,26 @@ XPTO:
 ACME
 Events:  <none>
 ```
+
+### Connecting Pod to ConfigMap
+
+To connect a Pod or deployment to a ConfigMap, one can use the `env` key in the Pod or
+Deployment YAML:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+    type: webserver
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  - envFrom:
+    - configMapRef:
+        name: my-config3
+```
