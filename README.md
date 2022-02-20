@@ -536,7 +536,6 @@ XPTO:
 ACME
 Events:  <none>
 ```
-
 ### Connecting Pod to ConfigMap
 
 To connect a Pod or deployment to a ConfigMap, one can use the `env` key in the Pod or
@@ -559,3 +558,16 @@ spec:
     - configMapRef:
         name: my-config3
 ```
+
+## Secrets
+
+A ConfigMap is an API object used to store non-confidential data in key-value pairs.
+Pods can consume ConfigMaps as environment variables, command-line arguments, or as
+configuration files in a volume.
+
+A ConfigMap allows you to decouple environment-specific configuration from your
+container images, so that your applications are easily portable.
+
+Official Doc: https://kubernetes.io/docs/concepts/configuration/configmap/
+
+### Imperative Deploy
