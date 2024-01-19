@@ -3,12 +3,37 @@
 Exam: https://www.cncf.io/certification/ckad/
 Course: https://www.udemy.com/course/certified-kubernetes-application-developer/
 
-## **Master Node**
+## Core Concepts of K8S Architecture
+
+### Cluster
+
+Set of nodes grouped together.
+
+- [Official Doc](https://kubernetes.io/docs/concepts/overview/components/)
+
+> When you deploy Kubernetes, you get a cluster. A Kubernetes cluster consists of a set of worker machines, called nodes, that run
+> containerized applications. Every cluster has at least one worker node.
+
+### Nodes
+
+A worker machine in Kubernetes
+
+- [Official Doc](https://kubernetes.io/docs/concepts/architecture/nodes/)
+
+> Kubernetes runs your workload by placing containers into Pods to run on Nodes. A node may be a virtual or physical machine,
+> depending on the cluster. Each node is managed by the control plane and contains the services necessary to run Pods. Typically
+> you have several nodes in a cluster; in a learning or resource-limited environment, you might have only one node. The components
+> on a node include the kubelet, a container runtime, and the kube-proxy.
+
+
+## Control Plane Components 
+
+### **Master Node**
 
 Another node with Kubernetes in it, responsible for the orchestration of worker
 nodes within a cluster. It embeds the Kube API Server.
 
-### API Server
+### Kube API Server
 
 Frontend for Kubernetes. User management devices, CLI, etc. talk directly with
 API server to interact with a Cluster.
@@ -21,15 +46,22 @@ that information in all the nodes of the cluster in a distributed manner.
 
 It also implements logs within a cluster to ensure no conflict between masters.
 
-### Controller
+### kube-controller-manager
 
 Responsible for noticing and responding when nodes, containers, endpoints goes
 down, etc. - it makes decision to bring up new containers, in such cases.
 
-### Scheduler
+### kube-scheduler
 
 Responsible for distributing work, or containers, across multiple nodes. Assign
 newly-created containers to nodes.
+
+## cloud-controller-manager 
+
+A Kubernetes control plane component that embeds cloud-specific control logic. The cloud
+controller manager lets you link your cluster into your cloud provider's API, and separates
+out the components that interact with that cloud platform from components that only interact
+with your cluster.
 
 ## **Worker Nodes**
 
@@ -63,7 +95,7 @@ Cheat Sheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 ------
 
-# Components
+## Other Components
 
 ## Pod
 
