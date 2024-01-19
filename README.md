@@ -51,10 +51,14 @@ It also implements logs within a cluster to ensure no conflict between masters.
 Responsible for noticing and responding when nodes, containers, endpoints goes
 down, etc. - it makes decision to bring up new containers, in such cases.
 
-### kube-scheduler
+### [kube-scheduler](https://kubernetes.io/docs/concepts/overview/components/#kube-scheduler)
 
-Responsible for distributing work, or containers, across multiple nodes. Assign
-newly-created containers to nodes.
+Control plane component that watches for newly created Pods with no assigned node,
+and selects a node for them to run on.
+
+Factors taken into account for scheduling decisions include: individual and collective
+resource requirements, hardware/software/policy constraints, affinity and anti-affinity
+specifications, data locality, inter-workload interference, and deadlines.
 
 ## cloud-controller-manager 
 
