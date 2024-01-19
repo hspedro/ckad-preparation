@@ -7,7 +7,7 @@ Course: https://www.udemy.com/course/certified-kubernetes-application-developer/
 
 ### Cluster
 
-Set of nodes grouped together.
+Set of nodes grouped.
 
 - [Official Doc](https://kubernetes.io/docs/concepts/overview/components/)
 
@@ -26,52 +26,52 @@ A worker machine in Kubernetes
 > on a node include the kubelet, a container runtime, and the kube-proxy.
 
 
-## Control Plane Components 
+## Control Plane Components
 
 ### **Master Node**
 
-Another node with Kubernetes in it, responsible for the orchestration of worker
+Another node with Kubernetes in it. It is responsible for the orchestration of worker
 nodes within a cluster. It embeds the Kube API Server.
 
 ### Kube API Server
 
 Frontend for Kubernetes. User management devices, CLI, etc. talk directly with
-API server to interact with a Cluster.
+the API server to interact with a Cluster.
 
 ### `etcd` Key Store
 
 Distributed reliable key-value store used by Kubernetes to store all data used
-to manage the cluster. When you have multiple nodes and master, etcd stores all
+to manage the cluster. When you have multiple nodes and master, `etcd` stores all
 that information in all the nodes of the cluster in a distributed manner.
 
 It also implements logs within a cluster to ensure no conflict between masters.
 
 ### kube-controller-manager
 
-Responsible for noticing and responding when nodes, containers, endpoints goes
-down, etc. - it makes decision to bring up new containers, in such cases.
+Responsible for noticing and responding when nodes, containers, endpoints go
+down, etc. - it makes decisions to bring up new containers, in such cases.
 
 ### [kube-scheduler](https://kubernetes.io/docs/concepts/overview/components/#kube-scheduler)
 
 Control plane component that watches for newly created Pods with no assigned node,
 and selects a node for them to run on.
 
-Factors taken into account for scheduling decisions include: individual and collective
+Factors taken into account for scheduling decisions include individual and collective
 resource requirements, hardware/software/policy constraints, affinity and anti-affinity
 specifications, data locality, inter-workload interference, and deadlines.
 
-## cloud-controller-manager 
+## cloud-controller-manager
 
 A Kubernetes control plane component that embeds cloud-specific control logic. The cloud
-controller manager lets you link your cluster into your cloud provider's API, and separates
-out the components that interact with that cloud platform from components that only interact
+controller manager lets you link your cluster to your cloud provider's API and separates
+the components that interact with that cloud platform from components that only interact
 with your cluster.
 
 ## **Worker Nodes**
 
 Where the containers are hosted, thus make use of a Container Runtime.
 To communicate with the Kube API Server from the Master node, the worker nodes
-embeds the kubelet service
+embed the `kubelet`` service
 
 ### kubelet
 
@@ -82,7 +82,8 @@ server from the Master node.
 ### Container Runtime
 
 Underlying software used to run containers. Docker runtime is the most common
-one, but there are a few others:
+one, but there are a few others
+
 * [rkt](https://www.redhat.com/pt-br/topics/containers/what-is-rkt): maintained by RedHat
 * [CRI-O](https://cri-o.io/): Cloud Native Computing Foundation incubating project
 
@@ -103,7 +104,7 @@ Cheat Sheet: https://kubernetes.io/docs/reference/kubectl/cheatsheet/
 
 ## Pod
 
-Pod's are the smallest working units of Kubernetes which runs a single-instance
+Pods are the smallest working units of Kubernetes which runs a single instance
 of an application.
 
 ![Simple pod overview](./images/pod.png)
@@ -112,18 +113,18 @@ Pods run on top of a Node. When a Node does not have available resources to
 deploy new pods, then the scheduler deploys a new Node to run that pod.
 
 Pods usually have a 1:1 relationship with containers. To scale up an application,
-one must create new pods, rather than new containers to an existing pod.
+one must create new pods, rather than new containers for an existing pod.
 
-Load balancer between the containers is handled by a separate entity.
+The load balancer between the containers is handled by a separate entity.
 
 Official Doc: https://kubernetes.io/docs/concepts/workloads/pods/
 
 ## Multi-Container Pods
 
-Even though pods and container usually have a 1:1 relationship, it is not
+Even though pods and containers usually have a 1:1 relationship, it is not
 strictly enforced, thus we can have multiple containers running in a single pod.
 
-One scenario for this, would be helper containers that might be doing some kind
+One scenario for this would be helper containers that might be doing some kind
 of supportive task for a web application, i.e: processing a file uploaded by the
 user, etc. In that case, both containers are part of the same pod and share the
 same network space (`localhost`) - they can easily share the same storage space
@@ -131,8 +132,8 @@ as well.
 
 ![Multi-container pods](./images/multi-container-pods.png)
 
-One common application, would be [Envoy](https://www.envoyproxy.io/) sidecar,
-which is a reverse-proxy that [istio](https://istio.io/) injects in
+One common application would be [Envoy](https://www.envoyproxy.io/) sidecar,
+which is a reverse proxy that [istio](https://istio.io/) injects into the
 application's pods.
 
 ![Envoy sidecar in istio](./images/istio-envoy.png)
@@ -140,9 +141,9 @@ application's pods.
 ### Deploying via Kubectl imperatively
 
 There are two ways of deploying a pod using `kubectl` CLI, the first one is
-imperatively using `kubectl run` passing as argument the image of the container.
-What it does is first create the pod, then fetches the image from
-docker hub registry, which get's finally deployed as a container inside the pod.
+imperatively using `kubectl run` passing as an argument the image of the container.
+What it does is first create the pod, then fetch the image from the
+docker hub registry, which gets finally deployed as a container inside the pod.
 
 ```bash
 $ kubectl run nginx --image=nginx
@@ -191,7 +192,7 @@ pod "nginx" deleted
 
 ## ReplicaSet
 
-ReplicaSet is a type of a controller whose purpose is to maintain a stable set
+ReplicaSet is a type of controller whose purpose is to maintain a stable set
 of replica Pods running at any given time. As such, it is often used to
 guarantee the availability of a specified number of identical Pods.
 
@@ -244,16 +245,16 @@ nginx-749sr   1/1     Running   0          2m
 nginx-qdqrn   1/1     Running   0          2m
 ```
 
-It is important to specify the **selector**, since this will be used by the
+It is important to specify the **selector** since this will be used by the
 ReplicaSet to match what pods it should consider under its control. This also
 makes it possible for ReplicaSets to monitor already existing pods.
 
-The **template** section is used to specify how the pod should be created, if
+The **template** section is used to specify how the pod should be created if
 the ReplicaSet needs to bring up a new pod.
 
 ### Updating the Replicas
 
-1. Change `replicas` number in the YAML and apply with: `kubectl replace -f nginx-rs.yaml`
+1. Change the number of `replicas` in the YAML and apply with: `kubectl replace -f nginx-rs.yaml`
 2. Use `kubectl scale --replicas=6 -f nginx-rs.yaml`, this won't change the actual
 number of replicas in `nginx-rs.yaml`
 3. Use `kubectl scale --replicas=6 replicaset nginx`, this won't change the actual
@@ -268,7 +269,7 @@ A Deployment provides declarative updates for Pods and ReplicaSets.
 
 You describe a desired state in a Deployment, and the Deployment Controller
 changes the actual state to the desired state at a controlled rate. You can
-define Deployments to create new ReplicaSets, or to remove existing Deployments
+define Deployments to create new ReplicaSets or to remove existing Deployments
 and adopt all their resources with new Deployments.
 
 Official Doc: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
@@ -322,7 +323,7 @@ nginx-5788499b89-xfw5b   1/1     Running   0          75s
 
 ## Namespaces
 
-In Kubernetes, namespaces provides a mechanism for isolating groups of resources
+In Kubernetes, namespaces provide a mechanism for isolating groups of resources
 within a single cluster. Names of resources need to be unique within a
 namespace, but not across namespaces. Namespace-based scoping is applicable only
 for namespaced objects (e.g. Deployments, Services, etc) and not for
@@ -334,14 +335,14 @@ Kubernetes starts with four initial namespaces:
 * `kube-system`: The namespace for objects created by the Kubernetes system
 * `kube-public`: This namespace is created automatically and is readable by all
 users (including those not authenticated). This namespace is mostly reserved for
-cluster usage, in case that some resources should be visible and readable
+cluster usage, in case some resources should be visible and readable
 publicly throughout the whole cluster. The public aspect of this namespace is
 only a convention, not a requirement.
 * `kube-node-lease`: This namespace holds Lease objects associated with each
 node. Node leases allow the kubelet to send heartbeats so that the control plane
 can detect node failure.
 
-Offical Doc: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+- [Official Doc](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
 
 ![Namespace resource allocation](./images/namespace-1.png)
 
@@ -414,16 +415,16 @@ is a concern that one team could use more than its fair share of resources.
 Resource quotas are a tool for administrators to address this concern.
 
 A resource quota, defined by a ResourceQuota object, provides constraints that
-limit aggregate resource consumption per namespace. It can limit the quantity of
+limit aggregate resource consumption per namespace. It can limit the number of
 objects that can be created in a namespace by type, as well as the total amount
 of compute resources that may be consumed by resources in that namespace.
 
-Official Doc: https://kubernetes.io/docs/concepts/policy/resource-quotas/
+- [Official Doc](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
 
 ### YAML Deploy
 
 The following will match each pod with `priorityClassName: high` in its
-definition, on `playground` namespace to the quota.
+definition, on the `playground` namespace to the quota.
 
 ```yaml
 apiVersion: v1
@@ -462,11 +463,11 @@ pods        0     20
 ## ConfigMap
 
 A ConfigMap is an API object used to store non-confidential data in key-value pairs.
-Pods can consume ConfigMaps as environment variables, command-line arguments, or as
+Pods can consume ConfigMaps as environment variables, command-line arguments, or
 configuration files in a volume.
 
 A ConfigMap allows you to decouple environment-specific configuration from your
-container images, so that your applications are easily portable.
+container images so that your applications are easily portable.
 
 Official Doc: https://kubernetes.io/docs/concepts/configuration/configmap/
 
@@ -598,11 +599,11 @@ spec:
 ## Secrets
 
 A ConfigMap is an API object used to store non-confidential data in key-value pairs.
-Pods can consume ConfigMaps as environment variables, command-line arguments, or as
+Pods can consume ConfigMaps as environment variables, command-line arguments, or
 configuration files in a volume.
 
 A ConfigMap allows you to decouple environment-specific configuration from your
-container images, so that your applications are easily portable.
+container images so that your applications are easily portable.
 
 Official Doc: https://kubernetes.io/docs/concepts/configuration/configmap/
 
